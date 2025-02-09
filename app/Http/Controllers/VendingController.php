@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 class VendingController extends Controller
 {
    
-     public function register(Request $request)
+     public function addvendinglocation(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -20,15 +20,20 @@ class VendingController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user = vendinglocation::create([
+         vendinglocation::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
            
         ]);
 
-        return response()->json(['message' => 'User registered successfully'], 201);
+        return response()->json(['message' => 'Location added successfully'], 201);
     }
 
+     public function getvendinglocation(Request $request)
+    { $location = vendinglocation::all();
+    return response()->json($location, 200);
+    }
  
   
 }

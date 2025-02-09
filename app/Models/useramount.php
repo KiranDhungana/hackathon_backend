@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class vendinglocation extends Model
+class useramount extends Model
 {
-       protected $fillable = [
-        'name',
-        'latitude',
+      protected $fillable = [
+        'redeem_amout',
         'longitude',
         'created_at',
         'updated_at',
+        'transictionid'
     ];
 }
