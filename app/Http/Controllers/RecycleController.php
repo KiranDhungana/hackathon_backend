@@ -62,11 +62,7 @@ class RecycleController extends Controller
 
 public function leaderboard(){
     $recycle =Recycle::all();
-    use App\Models\Reward;
-use App\Models\User;
-
-
-
+    
     return response()->json(
     $recycle
     ); 
