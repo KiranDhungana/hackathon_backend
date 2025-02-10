@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB; 
 use App\Models\Recycle;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +20,23 @@ class RecycleController extends Controller
         'price' => 'required|numeric',
         'secret' => 'required|string'
     ]);
+ $user = Auth::guard('sanctum')->user();
+     if (!$user instanceof \App\Models\User) {
+        return response()->json([
+            'error' => 'User is not an instance of the User model',
+        ], 400);
+    }
 
+    $now = now();  
+    $lastRecycle = Recycle::where('user_id', $user->id)->latest('recycled_date')->first();
+
+    if ($lastRecycle && $lastRecycle->recycled_date->diffInHours($now) <= 24) {
+        $user->streak += 1;
+    } else {
+        $user->streak = 0;
+    }
+
+    $user->save();
     $item = new Recycle();
     $item->user_id = $user->id; 
     $item->material_name = $validatedData['material_name'];
@@ -60,13 +77,24 @@ class RecycleController extends Controller
     ]); 
 }
 
-public function leaderboard(){
-    $recycle =Recycle::all();
-    
-    return response()->json(
-    $recycle
-    ); 
 
+public function leaderboard() {
+    $topUsersSubquery = DB::table('recycles')
+                          ->select('user_id', DB::raw('SUM(reward) as total_reward'))
+                          ->groupBy('user_id')
+                          ->orderBy('total_reward', 'desc')
+                          ->limit(3);
+
+    $topUsers = User::select('users.id', 'users.name', 'users.email', 'sub.total_reward')
+                     ->joinSub($topUsersSubquery, 'sub', function($join) {
+                         $join->on('users.id', '=', 'sub.user_id');
+                     })
+                     ->get();
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $topUsers
+    ]);
 }
 
 }

@@ -28,7 +28,7 @@ Route::post('/login-admin', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/super-admin', [AuthController::class, 'user']);
     Route::get('/all-user', [SuperadminController::class, 'getalluser']);
-    Route::get('/leaderboard', [SuperadminController::class, 'getalluser']);
+    Route::get('/leaderboard', [RecycleController::class, 'leaderboard']);
     Route::post('/add-location', [VendingController::class, 'addvendinglocation']);
     Route::get('/get-location', [VendingController::class, 'getvendinglocation']);
     });
