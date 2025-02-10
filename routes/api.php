@@ -23,6 +23,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   
 Route::post('/add-location', [VendingController::class, 'addvendinglocation']);
 });
+Route::post('/shortedvending-location', [VendingController::class, 'getdistance']);
 Route::post('/login-admin', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/super-admin', [AuthController::class, 'user']);

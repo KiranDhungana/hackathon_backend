@@ -70,6 +70,7 @@ class AuthController extends Controller
     // DB::table('recycles')->where('user_id', $user->id)->value('reward');
 
   $reward =   Recycle::where('user_id', $user->id)->pluck('reward');
+  $streak = $user->streak;
     if (!$reward) {
         $reward = "No reward available"; 
     }
@@ -77,7 +78,8 @@ class AuthController extends Controller
     return response()->json([
         'user' => $user,
         'userid'=>$user->id,
-        'reward' => $reward
+        'reward' => $reward,
+        'streak'=>$streak
     ], 200);
 }
 

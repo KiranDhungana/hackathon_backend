@@ -34,6 +34,29 @@ class VendingController extends Controller
     { $location = vendinglocation::all();
     return response()->json($location, 200);
     }
- 
-  
+   public function getdistance(Request $req)
+{
+    $lat1 = $req['latitude'];
+    $lon1 = $req['longitude'];
+    $distance = [];
+    $vending = vendinglocation::all();
+
+    foreach ($vending as $k) {
+        $lat2 = $k['latitude'];
+        $lon2 = $k['longitude'];
+        $theta = $lon1 - $lon2;
+        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+        $miles = $dist * 60 * 1.1515;
+        $unit = strtoupper('K');
+        $distance[] = ['vending' => $k, 'distance' => $miles * 1.609344];
+    }
+
+    usort($distance, function ($a, $b) {
+        return $a['distance'] <=> $b['distance']; 
+    });
+
+    return response()->json($distance, 201); 
+}
 }

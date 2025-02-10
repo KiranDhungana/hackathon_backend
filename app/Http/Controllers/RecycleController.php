@@ -29,16 +29,15 @@ class RecycleController extends Controller
     
     return response()->json([
         'message' => 'Recycle item saved successfully',
-        'data' => $req->all()
+        'data' => $req->all(),
+        'contribution'=>'You contributed to reduce 100-200g of CO₂ ',
     ], 201);
 
  }
 
  public function streak(){
   $user = Auth::guard('sanctum')->user();
-    
-  
-    if (!$user instanceof \App\Models\User) {
+     if (!$user instanceof \App\Models\User) {
         return response()->json([
             'error' => 'User is not an instance of the User model',
         ], 400);
@@ -53,15 +52,25 @@ class RecycleController extends Controller
         $user->streak = 0;
     }
 
-    // Save the user data
     $user->save();
 
     return response()->json([
         'message' => 'Recycling recorded successfully!',
         'streak' => $user->streak,
     ]); 
+}
+
+public function leaderboard(){
+    $recycle =Recycle::all();
+    use App\Models\Reward;
+use App\Models\User;
 
 
- }
+
+    return response()->json(
+    $recycle
+    ); 
+
+}
 
 }
