@@ -14,7 +14,7 @@ class EnsureTokenIsValid
      */
     public function handle(Request $request, Closure $next,$role): Response
     {
-      if ($request->user() && $request !== $role) {
+      if ($request->user()->email && $request !== $role) {
         return response()->json(['message' => 'Unauthorized'], 403);
     }
         return $next($request);

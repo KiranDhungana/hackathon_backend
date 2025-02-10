@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Recycle;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\DB; 
 
 class AuthController extends Controller
 {
@@ -55,10 +57,29 @@ class AuthController extends Controller
     }
 
  
+    // public function user(Request $request)
+    // {
+        
+    //     return response()->json(['user' => $request->user(),200]);
+    // }
     public function user(Request $request)
-    {
-        return response()->json(['user' => $request->user()]);
+{
+    
+  $user = Auth::guard('sanctum')->user();
+    
+    // DB::table('recycles')->where('user_id', $user->id)->value('reward');
+
+  $reward =   Recycle::where('user_id', $user->id)->pluck('reward');
+    if (!$reward) {
+        $reward = "No reward available"; 
     }
+
+    return response()->json([
+        'user' => $user,
+        'userid'=>$user->id,
+        'reward' => $reward
+    ], 200);
+}
 
 
     public function logout(Request $request)
@@ -101,4 +122,5 @@ class AuthController extends Controller
             ? response()->json(['message' => 'Password reset successfully'])
             : response()->json(['message' => 'Invalid token'], 400);
     }
+    
 }
